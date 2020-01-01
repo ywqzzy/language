@@ -1,7 +1,7 @@
 from lexer import Lexer
 from syntax_parser import Parser
 from interpreter import *
-
+from context import *
 
 def run(file_name, text):
     lexer = Lexer(file_name, text)
@@ -14,8 +14,10 @@ def run(file_name, text):
     if ast.error: return None, ast.error
 
     interpreter = Interpreter()
+    
+    context = Context('<program>')
 
-    result = interpreter.visit(ast.node)
+    result = interpreter.visit(ast.node, context)
 
 
     return result.value, result.error
