@@ -6,7 +6,7 @@ class Position:
         self.line_num = line_num
         self.col_num = col_num
     
-    def advance(self, current_char):
+    def advance(self, current_char=None):
         self.idx += 1 
         self.col_num += 1
         if current_char == '\n':
