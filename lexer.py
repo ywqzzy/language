@@ -1,7 +1,7 @@
 from constants import *
 from position import Position
 from tokens import Token
-from error import IllegalCharError
+from error import *
 
 class Lexer:
     def __init__(self, file_name, text):
@@ -45,9 +45,16 @@ class Lexer:
             elif self.current_char == ')':
                 tokens.append(Token(TT_RPAREN, pos_start=self.pos))
                 self.advance()
+            elif self.current_char == '!':
+                tok, error = self.make_not_equals()
+                if error: return [], error
+                tokens.append(tok)
             elif self.current_char == '=':
-                tokens.append(Token(TT_EQ, pos_start=self.pos))
-                self.advance()
+                tokens.append(self.make_equals())
+            elif self.current_char == '<':
+                tokens.append(self.make_less_than())
+            elif self.current_char == '>':
+                tokens.append(self.make_greater_than())
             else:
                 # return some error
                 pos_start = self.pos.copy()
@@ -88,3 +95,47 @@ class Lexer:
         tok_type = TT_KEYWORD if id_str in KEYWORDS else TT_IDENTIFIER
         return Token(tok_type, id_str, pos_start, self.pos)
 
+    def make_not_equals(self):
+        pos_start = self.pos.copy()
+        self.advance()
+
+        if self.current_char == '=':
+            self.advance()
+            return Token(TT_NE, pos_start=pos_start, pos_end=self.pos), None
+        self.advance()
+
+        return None, ExpectedCharError(pos_start, self.pos, "'=' (after '!') ")
+    
+    def make_equals(self):
+        tok_type = TT_EQ
+        pos_start = self.pos.copy()
+        self.advance()
+
+        if self.current_char == '=':
+            self.advance()
+            tok_type = TT_EE
+        
+        return Token(tok_type, pos_start=pos_start, pos_end=self.pos)
+
+    def make_less_than(self):
+        tok_type = TT_LT
+        pos_start = self.pos.copy()
+        self.advance()
+
+        if self.current_char == '=':
+            self.advance()
+            tok_type = TT_LTE
+        
+        return Token(tok_type, pos_start=pos_start, pos_end=self.pos)
+        
+
+    def make_greater_than(self):
+        tok_type = TT_GT
+        pos_start = self.pos.copy()
+        self.advance()
+
+        if self.current_char == '=':
+            self.advance()
+            tok_type = TT_GTE
+        
+        return Token(tok_type, pos_start=pos_start, pos_end=self.pos)

@@ -59,6 +59,22 @@ class Interpreter:
             result, error = left.dived_by(right)
         elif node.op_tok.type == TT_POW:
             result, error = left.powed_by(right)
+        elif node.op_tok.type == TT_EE:
+            result, error = left.get_comparison_eq(right)
+        elif node.op_tok.type == TT_NE:
+            result, error = left.get_comparison_ne(right)
+        elif node.op_tok.type == TT_LT:
+            result, error = left.get_comparison_lt(right)
+        elif node.op_tok.type == TT_GT:
+            result, error = left.get_comparison_gt(right)
+        elif node.op_tok.type == TT_LTE:
+            result, error = left.get_comparison_lte(right)
+        elif node.op_tok.type == TT_GTE:
+            result, error = left.get_comparison_gte(right)
+        elif node.op_tok.matches(TT_KEYWORD, 'AND'):
+            result, error = left.anded_by(right)
+        elif node.op_tok.matches(TT_KEYWORD, 'OR'):
+            result, error = left.ored_by(right)
         
         if error:
             return res.failure(error)
@@ -74,6 +90,8 @@ class Interpreter:
         error = None
         if node.op_tok.type == TT_MINUS:
             number, error = number.multed_by(Number(-1))
+        elif node.op_tok.matches(TT_KEYWORD, 'NOT'):
+            number, error = number.notted()
         if error:
             return res.failure(error)
         else:
