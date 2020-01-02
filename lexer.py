@@ -22,18 +22,18 @@ class Lexer:
                 self.advance()
             elif self.current_char in DIGITS:
                 tokens.append(self.make_number())
-            elif self.current_char in LETTERS or '\u4e00' <= self.current_char <= '\u9fff' :
+            elif self.current_char in LETTERS or ('\u4e00' <= self.current_char <= '\u9fff' and self.current_char not in KEY_SYMBOL):
                 tokens.append(self.make_identifier())
-            elif self.current_char == '+':
+            elif self.current_char == '+' or self.current_char == '加':  #TODO  may not in this step, can seperate a function to handle it
                 tokens.append(Token(TT_PLUS, pos_start=self.pos))
                 self.advance()
-            elif self.current_char == '-':
+            elif self.current_char == '-' or self.current_char == '减':
                 tokens.append(Token(TT_MINUS, pos_start=self.pos))
                 self.advance()
-            elif self.current_char == '*':
+            elif self.current_char == '*' or self.current_char == '乘':
                 tokens.append(Token(TT_MUL, pos_start=self.pos))
                 self.advance()
-            elif self.current_char == '/':
+            elif self.current_char == '/' or self.current_char == '除':
                 tokens.append(Token(TT_DIV, pos_start=self.pos))
                 self.advance()
             elif self.current_char == '^':
