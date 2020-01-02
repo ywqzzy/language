@@ -1,6 +1,23 @@
 import string
 
-DIGITS = '0123456789'
+EN_DIGITS = '0123456789'
+ZH_DIGITS = '零一二三四五六七八九'
+DIGITS = EN_DIGITS + ZH_DIGITS
+
+ZH_DIGITS_DICT = {
+    '零': '0',
+    '一': '1',
+    '二': '2',
+    '三': '3',
+    '四': '4',
+    '五': '5',
+    '六': '6',
+    '七': '7',
+    '八': '8',
+    '九': '9',
+    '十': '10',
+}
+
 LETTERS = string.ascii_letters
 LETTERS_DIGITS = LETTERS + DIGITS
 
@@ -27,8 +44,17 @@ TT_EQ         = 'EQ'
 
 
 KEYWORDS = [
+    '定义变量',
     'VAR',
     'AND',
     'OR',
-    'NOT'
+    'NOT',
+    '如果',
+    '那么',
+    '不然',
+    '否则',
+    'IF',
+    'THEN',
+    'ELIF',
+    'ELSE'
 ]

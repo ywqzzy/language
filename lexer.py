@@ -22,7 +22,7 @@ class Lexer:
                 self.advance()
             elif self.current_char in DIGITS:
                 tokens.append(self.make_number())
-            elif self.current_char in LETTERS:
+            elif self.current_char in LETTERS or '\u4e00' <= self.current_char <= '\u9fff' :
                 tokens.append(self.make_identifier())
             elif self.current_char == '+':
                 tokens.append(Token(TT_PLUS, pos_start=self.pos))
@@ -76,7 +76,10 @@ class Lexer:
                 dot_count += 1
                 num_str += '.'
             else:
-                num_str += self.current_char
+                if self.current_char in ZH_DIGITS:
+                    num_str += ZH_DIGITS_DICT[self.current_char]
+                else:
+                    num_str += self.current_char
             self.advance()
         
         if dot_count == 0:
@@ -84,11 +87,12 @@ class Lexer:
         else: 
             return Token(TT_FLOAT, float(num_str), pos_start, self.pos)
 
+    
     def make_identifier(self):
         id_str = ''
         pos_start = self.pos.copy()
 
-        while self.current_char != None and self.current_char in LETTERS_DIGITS + '_':
+        while self.current_char != None and (self.current_char in LETTERS_DIGITS + '_' or '\u4e00' <= self.current_char <= '\u9fff'):
             id_str += self.current_char
             self.advance()
         

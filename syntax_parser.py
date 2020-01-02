@@ -51,6 +51,11 @@ class Parser:
                     self.current_tok.pos_start, self.current_tok.pos_end,
                     "Expected ')' "
                 ))
+        elif tok.matches(TT_KEYWORD, 'IF') or tok.matches(TT_KEYWORD, '如果'):  #TODO
+            if_expr = res.register(self.if_expr())
+            if res.error: return res
+            return res.success(if_expr)
+
         return res.failure(InvalidSyntaxError(
             tok.pos_start, tok.pos_end,
             "Expected int, float, identifier, '+', '-', or '(' "
@@ -78,7 +83,66 @@ class Parser:
     def term(self):
         return self.bin_op(self.factor, (TT_MUL, TT_DIV))
 
-    
+    def if_expr(self):
+        res = ParseResult()
+        cases = []
+        else_case = None
+        if not (self.current_tok.matches(TT_KEYWORD, 'IF') or self.current_tok.matches(TT_KEYWORD, '如果')) :    #TODO
+            return res.failure(InvalidSyntaxError(
+                self.current_tok.pos_start, self.current_tok.pos_end,
+                f"Expected 'IF'，'如果'" #TODO
+            ))
+        res.register_advancement()
+        self.advance()
+
+        condition = res.register(self.expr())
+        if res.error: return res
+
+        if not (self.current_tok.matches(TT_KEYWORD, 'THEN') or self.current_tok.matches(TT_KEYWORD, '那么')): #TODO
+            return res.failure(InvalidSyntaxError(
+                self.current_tok.pos_start, self.current_tok.pos_end,
+                f"Expected 'THEN','那么'" #TODO
+            ))
+        
+        res.register_advancement()
+        self.advance()
+
+        expr = res.register(self.expr())
+        if res.error: return res
+        cases.append((condition, expr))
+
+        while (self.current_tok.matches(TT_KEYWORD, 'ELIF') or self.current_tok.matches(TT_KEYWORD, '不然')): #TODO
+            res.register_advancement()
+            self.advance()
+            
+            condition = res.register(self.expr())
+            if res.error: return res
+            
+            if not (self.current_tok.matches(TT_KEYWORD, 'THEN') or self.current_tok.matches(TT_KEYWORD, '那么')): #TODO
+                return res.failure(InvalidSyntaxError(
+                    self.current_tok.pos_start, self.current_tok.pos_end,
+                    f"Expected 'THEN', '那么'"  #TODO
+                ))
+            
+            res.register_advancement()
+            self.advance()
+
+            expr = res.register(self.expr())
+            if res.error: return res
+
+            cases.append((condition, expr))
+
+        if self.current_tok.matches(TT_KEYWORD, 'ELSE') or self.current_tok.matches(TT_KEYWORD, '否则'): #TODO
+            res.register_advancement()
+            self.advance()
+
+            expr = res.register(self.expr())
+            if res.error: return res
+            else_case = expr
+
+        return res.success(IfNode(cases, else_case))
+
+
     def arith_expr(self):
         return self.bin_op(self.term, (TT_PLUS, TT_MINUS))
 
@@ -106,7 +170,7 @@ class Parser:
 
     def expr(self):
         res = ParseResult()
-        if self.current_tok.matches(TT_KEYWORD, 'VAR'):
+        if self.current_tok.matches(TT_KEYWORD, '定义变量') or self.current_tok.matches(TT_KEYWORD, 'VAR'):
             res.register_advancement()
             self.advance()
 
@@ -135,7 +199,7 @@ class Parser:
         if res.error: 
             return res.failure(InvalidSyntaxError(
                 self.current_tok.pos_start, self.current_tok.pos_end,
-                "EXPECTED 'VAR', int, float, identifier, '+', '-' or '('"
+                "EXPECTED '定义变量', 'VAR', int, float, identifier, '+', '-' or '('"
             ))
 
         return res.success(node)
