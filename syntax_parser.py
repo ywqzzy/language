@@ -55,6 +55,14 @@ class Parser:
             if_expr = res.register(self.if_expr())
             if res.error: return res
             return res.success(if_expr)
+        elif tok.matches(TT_KEYWORD, 'FOR') or tok.matches(TT_KEYWORD, '从'):
+            for_expr = res.register(self.for_expr())
+            if res.error: return res
+            return res.success(for_expr)
+        elif tok.matches(TT_KEYWORD, 'WHILE') or tok.matches(TT_KEYWORD, '当'):
+            while_expr = res.register(self.while_expr())
+            if res.error: return res
+            return res.success(while_expr)
 
         return res.failure(InvalidSyntaxError(
             tok.pos_start, tok.pos_end,
@@ -141,6 +149,104 @@ class Parser:
             else_case = expr
 
         return res.success(IfNode(cases, else_case))
+    
+    def for_expr(self):
+        res = ParseResult()
+
+        if not (self.current_tok.matches(TT_KEYWORD, 'FOR') or self.current_tok.matches(TT_KEYWORD, '从')): #TODO
+            return res.failure(InvalidSyntaxError(
+                self.current_tok.pos_start, self.current_tok.pos_end,
+                f"Expected 'FOR' or '从'"
+            ))
+        
+        res.register_advancement()
+        self.advance()
+
+        if self.current_tok.type != TT_IDENTIFIER:
+            return res.failure(InvalidSyntaxError(
+                self.current_tok.pos_start, self.current_tok.pos_start,
+                f"Expected identifier"
+            ))
+
+        var_name = self.current_tok
+        res.register_advancement()
+        self.advance()
+
+        if self.current_tok.type != TT_EQ:
+            return res.failure(InvalidSyntaxError(
+                self.current_tok.pos_start, self.current_tok.pos_end,
+                f"Expected '='"
+            ))
+        
+        res.register_advancement()
+        self.advance()
+
+        start_value = res.register(self.expr())
+        if res.error: return res
+        # print("type")
+        # print(self.current_tok.type)
+        # print("value")
+        # print(self.current_tok.value)
+
+        if self.current_tok.matches(TT_KEYWORD, 'TO') == False and self.current_tok.matches(TT_KEYWORD, '到') == False: #TODO
+            return res.failure(InvalidSyntaxError(
+                self.current_tok.pos_start, self.current_tok.pos_end,
+                f"Expected 'TO' or '到'"
+            ))
+        res.register_advancement()
+        self.advance()
+
+        end_value = res.register(self.expr())
+        if res.error: return res
+
+        if self.current_tok.matches(TT_KEYWORD, 'STEP') or self.current_tok.matches(TT_KEYWORD, '步长'): #TODO
+            res.register_advancement()
+            self.advance()
+
+            step_value =   res.register(self.expr())
+            if res.error: return res
+        else:
+            step_value = None
+        
+        if not (self.current_tok.matches(TT_KEYWORD, 'THEN') or self.current_tok.matches(TT_KEYWORD, '开始')): #TODO
+            return res.failure(InvalidSyntaxError(
+                self.current_tok.pos_start, self.current_tok.pos_end,
+                f"Expected 'THEN' or '开始'"
+            ))
+        res.register_advancement()
+        self.advance()
+
+        body = res.register(self.expr())
+        if res.error: return res
+
+        return res.success(ForNode(var_name, start_value, end_value, step_value, body))
+
+    def while_expr(self): 
+        res = ParseResult()
+        if not (self.current_tok.matches(TT_KEYWORD, 'WHILE') or self.current_tok.matches(TT_KEYWORD, '当')):
+            return res.failure(InvalidSyntaxError(
+                self.current_tok.pos_start, self.current_tok.pos_end,
+                f"Expected 'WHILE' or '当'"
+            ))
+        res.register_advancement()
+        self.advance()
+
+        condition = res.register(self.expr())
+        
+        if res.error: return res
+
+        if not (self.current_tok.matches(TT_KEYWORD, 'THEN') or self.current_tok.matches(TT_KEYWORD, '开始')): #TODO
+            return res.failure(InvalidSyntaxError(
+                self.current_tok.pos_start, self.current_tok.pos_end,
+                f"Expected 'THEN' or '开始'"
+            ))
+        res.register_advancement()
+        self.advance()
+
+        body = res.register(self.expr())
+        if res.error: return res
+
+        return res.success(WhileNode(condition, body))
 
 
     def arith_expr(self):

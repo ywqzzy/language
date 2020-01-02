@@ -2,7 +2,7 @@ import basic
 
 
 while True:
-    text = input('basic > ')
+    text = input('dulan >')
     result, error = basic.run('<stdin>', text)
 
     if error: print(error.as_string())

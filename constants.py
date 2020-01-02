@@ -57,5 +57,14 @@ KEYWORDS = [
     'IF',
     'THEN',
     'ELIF',
-    'ELSE'
+    'ELSE',
+    'FOR',
+    '从',
+    'TO',
+    '到',
+    'STEP',
+    '步长',
+    'WHILE',
+    '当',
+    '开始'
 ]
