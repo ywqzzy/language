@@ -24,6 +24,8 @@ class Lexer:
                 tokens.append(self.make_number())
             elif self.current_char in LETTERS or ('\u4e00' <= self.current_char <= '\u9fff' and self.current_char not in KEY_SYMBOL): #TODO  定义函数名为加减乘除开头会报错
                 tokens.append(self.make_identifier())
+            elif self.current_char in '"' or self.current_char == "言":
+                tokens.append(self.make_string())
             elif self.current_char == '+' or self.current_char == '加':  #TODO  may not in this step, can seperate a function to handle it
                 tokens.append(Token(TT_PLUS, pos_start=self.pos))
                 self.advance()
@@ -91,6 +93,33 @@ class Lexer:
             return Token(TT_INT, int(num_str), pos_start, self.pos)
         else: 
             return Token(TT_FLOAT, float(num_str), pos_start, self.pos)
+
+    
+    def make_string(self):
+        string = ''
+        pos_start = self.pos.copy()
+        escape_character = False
+        self.advance()
+
+        escape_characters = {
+            'n': '\n',
+            't': '\t'
+        }
+
+        while self.current_char != None and (self.current_char != '"' or self.current_char != '毕' or escape_character):
+            if escape_character:
+                string += escape_characters.get(self.current_char, self.current_char)
+            else:
+                if self.current_char == '\\':
+                    escape_character = True
+                else:
+                    string += self.current_char
+
+            self.advance()
+            escape_character = False
+        
+        self.advance()
+        return Token(TT_STRING, string, pos_start, self.pos)
 
     
     def make_identifier(self):

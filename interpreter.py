@@ -2,6 +2,7 @@ from number import *
 from constants import *
 from runtime_result import *
 from function import Function
+from string_model import String
 
 class Interpreter:
     def visit(self, node, context):
@@ -16,6 +17,11 @@ class Interpreter:
     def visit_NumberNode(self, node, context):
         return RTResult().success(
             Number(node.tok.value).set_context(context).set_pos(node.pos_start, node.pos_end)
+        )
+    
+    def visit_StringNode(self, node, context):
+        return RTResult().success( 
+            String(node.tok.value).set_context(context).set_pos(node.pos_start, node.pos_end)
         )
     
     def visit_VarAccessNode(self, node, context):
@@ -195,13 +201,3 @@ class Interpreter:
         if res.error: return res
 
         return res.success(return_value)
-
-
-
-
-
-
-
-
-
-    
