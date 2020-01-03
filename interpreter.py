@@ -15,7 +15,6 @@ class Interpreter:
     def no_visit_method(self, node, context):
         raise Exception(f'No visit_{type(node).__name__} method defined')
 
-
     def visit_NumberNode(self, node, context):
         return RTResult().success(
             Number(node.tok.value).set_context(context).set_pos(node.pos_start, node.pos_end)
@@ -38,7 +37,6 @@ class Interpreter:
         return res.success(
             List(elements).set_context(context).set_pos(node.pos_start, node.pos_end)
         )
-
     
     def visit_VarAccessNode(self, node, context):
         res = RTResult()
@@ -51,7 +49,7 @@ class Interpreter:
                 f"'{var_name}' is not defined'",
                 context
             ))
-        value = value.copy().set_pos(node.pos_start, node.pos_end)
+        value = value.copy().set_pos(node.pos_start, node.pos_end).set_context(context)
         return res.success(value)
     
     def visit_VarAssignNode(self, node, context):
@@ -221,4 +219,5 @@ class Interpreter:
 
         if res.error: return res
 
+        return_value = return_value.copy().set_pos(node.pos_start, node.pos_end).set_context(context)
         return res.success(return_value)
