@@ -82,6 +82,7 @@ class Parser:
             res.register_advancement()
             self.advance()
             return res.success(StringNode(tok))
+            
         elif tok.type == TT_IDENTIFIER:
             res.register_advancement()
             self.advance()

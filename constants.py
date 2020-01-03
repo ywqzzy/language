@@ -46,7 +46,7 @@ TT_IDENTIFIER = 'IDENTIFIER'
 TT_KEYWORD    = 'KEYWORD'
 TT_EQ         = 'EQ'
 
-KEY_SYMBOL = '加减乘除'
+KEY_SYMBOL = '加减乘除言'
 
 KEYWORDS = [
     '定义变量',

@@ -1,4 +1,5 @@
 from value import Value
+from number import Number
 
 class String(Value):
     def __init__(self, value):
@@ -8,6 +9,8 @@ class String(Value):
     def added_to(self, other):
         if isinstance(other, String):
             return String(self.value + other.value).set_context(self.context), None
+        elif isinstance(other, Number):
+            return String(self.value + str(other.value)).set_context(self.context), None
         else:
             return None, Value.illegal_operation(self, other)
     
