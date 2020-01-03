@@ -101,7 +101,7 @@ class Lexer:
             return Token(TT_FLOAT, float(num_str), pos_start, self.pos)
 
     
-    def make_string(self):  #TODO  have a bug
+    def make_string(self):
         string = ''
         pos_start = self.pos.copy()
         escape_character = False

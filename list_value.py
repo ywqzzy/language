@@ -14,19 +14,19 @@ class List(Value):
         return new_list, None
     
     def subbed_by(self, other):
-        if isinstance(self, Number):   #other is the idx
+        if isinstance(other, Number):
             new_list = self.copy()
-            try:
-                new_list.elements.pop(other.value)
-                return new_list, None
-            except:
-                return None, RTError(
-                    other.pos_start, other.pos_end,
-                    'Element at this index could not be removed from list because index is out of bound',
-                    self.context
+        try:
+            new_list.elements.pop(other.value)
+            return new_list, None
+        except:
+            return None, RTError(
+                other.pos_start, other.pos_end,
+                'Element at this index could not be removed from list because index is out of bounds',
+                self.context
                 )
         else:
-            None, Value.illegal_operation(self, other)    
+            return None, Value.illegal_operation(self, other)
 
     def multed_by(self, other):
         if isinstance(other, List):
@@ -43,17 +43,20 @@ class List(Value):
             except:
                 return None, RTError(
                     other.pos_start, other.pos_end,
-                    'Element at this index could not be retrieved from list because index is out of bound',
+                    'Element at this index could not be retrieved from list because index is out of bounds',
                     self.context
                 )
         else:
-            None, Value.illegal_operation(self, other)
+            return None, Value.illegal_operation(self, other)
 
     def copy(self):
-        copy = List(self.elements[:])
+        copy = List(self.elements)
         copy.set_pos(self.pos_start, self.pos_end)
         copy.set_context(self.context)
         return copy
+    
+    def __str__(self):
+        return ", ".join([str(x) for x in self.elements])
 
     def __repr__(self):
         return f'[{", ".join([str(x) for x in self.elements])}]'
