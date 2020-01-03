@@ -22,12 +22,14 @@ class Lexer:
                 self.advance()
             elif self.current_char in DIGITS:
                 tokens.append(self.make_number())
-            elif self.current_char in LETTERS or ('\u4e00' <= self.current_char <= '\u9fff' and self.current_char not in KEY_SYMBOL):
+            elif self.current_char in LETTERS or ('\u4e00' <= self.current_char <= '\u9fff' and self.current_char not in KEY_SYMBOL): #TODO  定义函数名为加减乘除开头会报错
                 tokens.append(self.make_identifier())
             elif self.current_char == '+' or self.current_char == '加':  #TODO  may not in this step, can seperate a function to handle it
                 tokens.append(Token(TT_PLUS, pos_start=self.pos))
                 self.advance()
-            elif self.current_char == '-' or self.current_char == '减':
+            elif self.current_char == '-':
+                tokens.append(self.make_minus_or_arrow())
+            elif self.current_char == '减':
                 tokens.append(Token(TT_MINUS, pos_start=self.pos))
                 self.advance()
             elif self.current_char == '*' or self.current_char == '乘':
@@ -55,6 +57,9 @@ class Lexer:
                 tokens.append(self.make_less_than())
             elif self.current_char == '>':
                 tokens.append(self.make_greater_than())
+            elif self.current_char == ',':
+                tokens.append(Token(TT_COMMA, pos_start=self.pos))
+                self.advance()
             else:
                 # return some error
                 pos_start = self.pos.copy()
@@ -143,3 +148,17 @@ class Lexer:
             tok_type = TT_GTE
         
         return Token(tok_type, pos_start=pos_start, pos_end=self.pos)
+
+    def make_minus_or_arrow(self):
+        tok_type = TT_MINUS
+        pos_start = self.pos.copy()
+
+        self.advance()
+
+        if self.current_char == '>':
+            self.advance()
+            tok_type = TT_ARROW
+        
+        return Token(tok_type, pos_start=pos_start, pos_end=self.pos)
+
+

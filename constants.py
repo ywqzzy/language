@@ -37,6 +37,9 @@ TT_GT      =    'GT'
 TT_LTE     =    'LTE'
 TT_GTE     =    'GTE'
 TT_EOF     =    'EOF'
+TT_COMMA   =    'COMMA'
+TT_ARROW   =    'ARROW'
+
 
 TT_IDENTIFIER = 'IDENTIFIER'
 TT_KEYWORD    = 'KEYWORD'
@@ -66,5 +69,7 @@ KEYWORDS = [
     '步长',
     'WHILE',
     '当',
-    '开始'
+    '开始',
+    'FUN',
+    '魔力法典',
 ]
