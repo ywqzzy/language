@@ -1,5 +1,5 @@
 from value import Value
-from number import Number
+from number_value import Number
 
 class String(Value):
     def __init__(self, value):

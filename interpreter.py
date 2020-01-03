@@ -1,8 +1,10 @@
-from number import *
 from constants import *
 from runtime_result import *
 from function import Function
-from string_model import String
+from string_value import String
+from number_value import *
+from list_value import List
+
 
 class Interpreter:
     def visit(self, node, context):
@@ -23,6 +25,20 @@ class Interpreter:
         return RTResult().success( 
             String(node.tok.value).set_context(context).set_pos(node.pos_start, node.pos_end)
         )
+    
+    def visit_ListNode(self, node, context):
+        res = RTResult()
+
+        elements = []
+
+        for element_node in node.element_nodes:
+            elements.append(res.register(self.visit(element_node, context)))
+            if res.error: return res
+        
+        return res.success(
+            List(elements).set_context(context).set_pos(node.pos_start, node.pos_end)
+        )
+
     
     def visit_VarAccessNode(self, node, context):
         res = RTResult()
@@ -124,6 +140,8 @@ class Interpreter:
     
     def visit_ForNode(self, node, context):
         res = RTResult()
+        elements = []
+
 
         start_value = res.register(self.visit(node.start_value_node, context))
         if res.error: return res
@@ -149,26 +167,29 @@ class Interpreter:
 
             i += step_value.value
 
-            res.register(self.visit(node.body_node, context))
+            elements.append(res.register(self.visit(node.body_node, context)))
             if res.error: return res
         
-        return res.success(None)
+        return res.success(
+            List(elements).set_context(context).set_pos(node.pos_start, node.pos_end)
+        )
 
     def visit_WhileNode(self, node, context):
         res = RTResult()
+        elements = []
 
         while True:
             condition = res.register(self.visit(node.condition_node, context))
-
             if res.error: return res
 
             if not condition.is_true(): 
                 break
-            
-            res.register(self.visit(node.body_node, context))
+            elements.append(res.register(self.visit(node.body_node, context)))
             if res.error: return res
         
-        return res.success(None)
+        return res.success(
+            List(elements).set_context(context).set_pos(node.pos_start, node.pos_end)
+        )
     
     def visit_FuncDefNode(self, node, context):
         res = RTResult()

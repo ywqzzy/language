@@ -1,5 +1,4 @@
 from error import *
-
 from value import Value
 
 class Number(Value):
