@@ -25,6 +25,8 @@ global_symbol_table.set("IS_FUNCTION",  BuildInFunction.is_function)
 global_symbol_table.set("APPEND",  BuildInFunction.append)
 global_symbol_table.set("POP",  BuildInFunction.pop)
 global_symbol_table.set("EXTEND",  BuildInFunction.extend)
+global_symbol_table.set("LEN",  BuildInFunction.len)
+global_symbol_table.set("RUN",  BuildInFunction.run)
 
 
 

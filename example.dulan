@@ -1,0 +1,16 @@
+# em..... 这个语言实在是太搞笑了
+定义变量 time = 零
+书之("你好世界")
+
+魔力法典 膜法(时间)
+  VAR res = 1
+  RETURN res + 时间
+END
+
+FOR i = 0 TO 5 THEN
+  书之("coding is fun!")
+  书之("what a fantastic journey!")
+  VAR new_time = 膜法(time)
+  书之(new_time)
+  time = new_time
+END
