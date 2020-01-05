@@ -42,6 +42,7 @@ TT_GTE     =    'GTE'
 TT_EOF     =    'EOF'
 TT_COMMA   =    'COMMA'
 TT_ARROW   =    'ARROW'
+TT_NEWLINE =    'NEWLINE'
 
 
 TT_IDENTIFIER = 'IDENTIFIER'
@@ -75,4 +76,6 @@ KEYWORDS = [
     '开始',
     'FUN',
     '魔力法典',
+    'END',
+    '终结'
 ]

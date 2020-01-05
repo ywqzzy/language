@@ -20,6 +20,9 @@ class Lexer:
         while self.current_char != None:
             if self.current_char in ' \t':
                 self.advance()
+            elif self.current_char in ';\n':
+                tokens.append(Token(TT_NEWLINE, pos_start=self.pos))
+                self.advance()
             elif self.current_char in DIGITS:
                 tokens.append(self.make_number())
             elif self.current_char in LETTERS or ('\u4e00' <= self.current_char <= '\u9fff' and self.current_char not in KEY_SYMBOL): #TODO  定义函数名为加减乘除开头会报错
