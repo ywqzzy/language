@@ -77,5 +77,8 @@ KEYWORDS = [
     'FUN',
     '魔力法典',
     'END',
-    '终结'
+    '终结',
+    'RETURN',
+    'BREAK',
+    'CONTINUE' #TODO
 ]
